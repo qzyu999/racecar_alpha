@@ -9,6 +9,7 @@ use('Agg')
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
+import os
 from model import value_iteration
 from model import q_learning
 from model import sarsa
@@ -167,5 +168,7 @@ def race():
 
 if __name__ == "__main__":
     # app.run(debug=True)
-    app.run()
+    # app.run()
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
     # app.run(host='0.0.0.0',port=8000)
