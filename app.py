@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 import os
+from forms import DriverForm
 from model import value_iteration
 from model import q_learning
 from model import sarsa
@@ -25,64 +26,12 @@ if __name__ == "__main__":
         ql_o_2, sa_o_1, sa_o_2, vi_r_1, vi_r_2, ql_r_1, ql_r_2, sa_r_1,\
         sa_r_2 = loaded_agents
 
-    global agent_list
     agent_list = [[[vi_l_1, ql_l_1, sa_l_1],
                     [vi_o_1, ql_o_1, sa_o_1],
                     [vi_r_1, ql_r_1, sa_r_1]],
                 [[vi_l_2, ql_l_2, sa_l_2],
                     [vi_o_2, ql_o_2, sa_o_2],
                     [vi_r_2, ql_r_2, sa_r_2]]]
-
-# def load_agents():
-#     if __name__ == "__main__":
-        # L-track
-        # vi_l_1 = pickle.load(open('vi_l_1.pkl', 'rb'))
-        # vi_l_2 = pickle.load(open('vi_l_2.pkl', 'rb'))
-
-        # ql_l_1 = pickle.load(open('ql_l_1.pkl', 'rb'))
-        # ql_l_2 = pickle.load(open('ql_l_2.pkl', 'rb'))
-
-        # sa_l_1 = pickle.load(open('sa_l_1.pkl', 'rb'))
-        # sa_l_2 = pickle.load(open('sa_l_2.pkl', 'rb'))
-
-        # # O-track
-        # vi_o_1 = pickle.load(open('vi_o_1.pkl', 'rb'))
-        # vi_o_2 = pickle.load(open('vi_o_2.pkl', 'rb'))
-
-        # ql_o_1 = pickle.load(open('ql_o_1.pkl', 'rb'))
-        # ql_o_2 = pickle.load(open('ql_o_2.pkl', 'rb'))
-
-        # sa_o_1 = pickle.load(open('sa_o_1.pkl', 'rb'))
-        # sa_o_2 = pickle.load(open('sa_o_2.pkl', 'rb'))
-
-        # # R-track
-        # vi_r_1 = pickle.load(open('vi_r_1.pkl', 'rb'))
-        # vi_r_2 = pickle.load(open('vi_r_2.pkl', 'rb'))
-
-        # ql_r_1 = pickle.load(open('ql_r_1.pkl', 'rb'))
-        # ql_r_2 = pickle.load(open('ql_r_2.pkl', 'rb'))
-
-        # sa_r_1 = pickle.load(open('sa_r_1.pkl', 'rb'))
-        # sa_r_2 = pickle.load(open('sa_r_2.pkl', 'rb'))
-        # PIK = 'pickle.dat'
-        # with open(PIK, "rb") as f:
-        #     loaded_agents = pickle.load(f)
-
-        # vi_l_1, vi_l_2, ql_l_1, ql_l_2, sa_l_1, sa_l_2, vi_o_1, vi_o_2, ql_o_1,\
-        #     ql_o_2, sa_o_1, sa_o_2, vi_r_1, vi_r_2, ql_r_1, ql_r_2, sa_r_1,\
-        #     sa_r_2 = loaded_agents
-        # Categorize the agents into lists
-        # Crash type -> Track type -> Car type
-        # [crash1_list, crash2_list]
-        # crash1_list:[l_track_list, o_track_list, r_track_list]
-        # ordered_agents = [[[vi_l_1, ql_l_1, sa_l_1],
-        #                 [vi_o_1, ql_o_1, sa_o_1],
-        #                 [vi_r_1, ql_r_1, sa_r_1]],
-        #             [[vi_l_2, ql_l_2, sa_l_2],
-        #                 [vi_o_2, ql_o_2, sa_o_2],
-        #                 [vi_r_2, ql_r_2, sa_r_2]]]
-        # global agent_list = ordered_agents
-    # return ordered_agents
 
 # Declare your table
 class ItemTable(Table):
@@ -107,6 +56,11 @@ def home():
 
 @app.route('/race', methods=['POST'])
 def race():
+    form = DriverForm()
+    if form.validate_on_submit():
+        return redirect(url_for('success'))
+    return render_template('index.html', form=form)
+
     # Get user input
     user_inputs = [int(idx) for idx in request.form.values()]
     crash_type = user_inputs[0] # Determine crash type 1 or 2
@@ -167,8 +121,5 @@ def race():
     return render_template('finished.html', model_plot=model_plot, table=table)
 
 if __name__ == "__main__":
-    # app.run(debug=True)
-    # app.run()
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
-    # app.run(host='0.0.0.0',port=8000)
